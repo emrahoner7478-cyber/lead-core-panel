@@ -9,7 +9,7 @@ st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 if os.path.exists("lead_core_pres.jpg"):
     st.image("lead_core_pres.jpg", width=250)
 
-st.title("Lead Core Performans ve Katılım Analiz Paneli")
+st.title("Lead Core Pres Performans ve Katılım Analiz Paneli")
 
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
@@ -185,7 +185,7 @@ else:
     durum_ozet_metni = " / ".join([f"{k}: {v} Kez" for k, v in durum_sayilari.items()]) if durum_sayilari else "Yok"
 
     # --- 👤 SEÇİLEN OPERATÖRÜN DİJİTAL KARNESİ ---
-    st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
+    st.subheader(f"📋 {secilen_operator} Performans Karnesi")
     
     if not op_row_data.empty:
         karne_dict = op_row_data.to_dict(orient="records")[0]
