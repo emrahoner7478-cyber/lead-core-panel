@@ -7,24 +7,21 @@ import streamlit as st
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
 st.title("🏭 Lead Core Bulut Performans Analiz Paneli")
-st.markdown("Google Drive üzerinden anlık güncellenen, telefondan erişilebilir resmi bulut ekranı.")
+st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
-# --- 🎯 GOOGLE DRIVE BAĞLANTI AYARI ---
-# Gönderdiğiniz linkten ayıklanan benzersiz dosya ID numaranız buraya kilitlendi:
-GOOGLE_DRIVE_DOSYA_ID = "11w5quWnoH5maxNT2Eegq8TpaKIAcRCv0" 
-
-GOOGLE_DRIVE_DOSYA_ID = "11w5quWnoH5maxNT2Eegq8TpaKIAcRCv0"
-tam_yol = f"https://google.com{GOOGLE_DRIVE_DOSYA_ID}"
-
+# --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
+# Excel dosyanız kodla yan yana durduğu için doğrudan ismiyle çağrılmaktadır
+tam_yol = "Lead_Core_Pres_Üretim.xlsx"
 
 @st.cache_data(ttl=600) # Verileri 10 dakikada bir buluttan tazeler, sistemi yormaz
 def yeni_excel_mimarisi_oku():
     try:
-        # Doğrudan Google Drive üzerindeki Excel dosyasını canlı olarak okur
+        # Depoya yüklediğiniz Excel dosyasını doğrudan ve engelsiz okur
         excel_dosyasi = pd.ExcelFile(tam_yol, engine="openpyxl")
         tum_satirlar = []
         
         toplam_aktif_gun_sayisi = len(excel_dosyasi.sheet_names)
+        # 7 Makine ve 3 Vardiya çarpanıyla toplam kapasite havuzu
         maks_teorik_vardiya = toplam_aktif_gun_sayisi * 7 * 3
         vardiya_hedef_adet = 90000.0
 
@@ -72,7 +69,7 @@ def yeni_excel_mimarisi_oku():
                 h_aksam_sabit = 0.0 if kod_a in ["T-ARIZA", "M-YOK", "OP-YOK"] else vardiya_hedef_adet
                 h_gece_sabit  = 0.0 if kod_g in ["T-ARIZA", "M-YOK", "OP-YOK"] else vardiya_hedef_adet
                 
-                # Ürün toplamları
+                # Vardiya bazlı ürün toplamları
                 toplam_urt_sabah, toplam_urt_aksam, toplam_urt_gece = 0.0, 0.0, 0.0
                 for p_idx in range(0, 5, 2):
                     r_aktif = bas_satir + p_idx
@@ -136,12 +133,12 @@ def yeni_excel_mimarisi_oku():
         if not tum_satirlar: return None
         return pd.DataFrame(tum_satirlar)
     except Exception as e:
-        st.error(f"Google Drive Excel bağlantısı kurulurken hata oluştu: {e}")
+        st.error(f"Excel dosyası deponun içinden okunurken hata oluştu: {e}")
         return None
 
 df = yeni_excel_mimarisi_oku()
 if df is None:
-    st.error("❌ Bulut Dosyası Bulunamadı! Lütfen Google Drive ID'nizi ve dosya paylaşım izinlerinizi kontrol edin.")
+    st.error("❌ Bulut Dosyası Bulunamadı! Lütfen Excel dosyasının GitHub deposuna doğru yüklendiğinden emin olun.")
 else:
     # --- YAN PANEL ---
     st.sidebar.header("🔍 Bulut Yönetim Paneli")
@@ -149,7 +146,7 @@ else:
     secilen_operator = st.sidebar.selectbox("Detaylı Karnesini İncelemek İçin Operatör Seçin:", operatorler)
     
     # Canlı Yenileme Butonu
-    if st.sidebar.button("🔄 Verileri Drive'dan Şimdi Yenile"):
+    if st.sidebar.button("🔄 Verileri Depodan Şimdi Yenile"):
         st.cache_data.clear()
         st.rerun()
         
