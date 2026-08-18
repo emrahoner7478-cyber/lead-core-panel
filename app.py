@@ -13,8 +13,8 @@ st.markdown("Google Drive üzerinden anlık güncellenen, telefondan erişilebil
 # Gönderdiğiniz linkten ayıklanan benzersiz dosya ID numaranız buraya kilitlendi:
 GOOGLE_DRIVE_DOSYA_ID = "11w5quWnoH5maxNT2Eegq8TpaKIAcRCv0" 
 
-# Bulut üzerinden doğrudan indirme link şablonu
-tam_yol = f"https://google.com{GOOGLE_DRIVE_DOSYA_ID}/export?format=xlsx"
+# Eski satırı silip yerine doğrudan bu kesin indirme kodunu yapıştırın:
+tam_yol = f"https://google.com{11w5quWnoH5maxNT2Eegq8TpaKIAcRCv0}"
 
 @st.cache_data(ttl=600) # Verileri 10 dakikada bir buluttan tazeler, sistemi yormaz
 def yeni_excel_mimarisi_oku():
