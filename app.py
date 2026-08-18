@@ -5,8 +5,12 @@ import streamlit as st
 
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
+# Başlığın hemen üstüne logoyu yerleştirir, width değerini küçülterek boyutunu ayarlayabilirsiniz
+if os.path.exists("lead_core_pres.jpg"):
+    st.image("lead_core_pres.jpg", width=120)
 
-st.title("🏭 Lead Core Bulut Performans Analiz Paneli")
+st.title("Lead Core Bulut Performans Analiz Paneli")
+
 st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
