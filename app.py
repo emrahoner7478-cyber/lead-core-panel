@@ -9,7 +9,7 @@ st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 if os.path.exists("lead_core_pres.jpg"):
     st.image("lead_core_pres.jpg", width=250)
 
-st.title("Lead Core Bulut Performans Analiz Paneli")
+st.title("Lead Core Performans ve Katılım Analiz Paneli")
 
 st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
