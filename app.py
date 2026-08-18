@@ -11,7 +11,6 @@ if os.path.exists("lead_core_pres.jpg"):
 
 st.title("Lead Core Performans ve Katılım Analiz Paneli")
 
-st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
 # Excel dosyanız kodla yan yana durduğu için doğrudan ismiyle çağrılmaktadır
