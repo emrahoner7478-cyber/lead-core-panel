@@ -185,7 +185,7 @@ else:
     durum_ozet_metni = " / ".join([f"{k}: {v} Kez" for k, v in durum_sayilari.items()]) if durum_sayilari else "Yok"
 
     # --- 👤 SEÇİLEN OPERATÖRÜN DİJİTAL KARNESİ ---
-    st.subheader(f"📋 {secilen_operator} Performans Karnesi")
+    st.subheader(f"📋 {secilen_operator} PERFORMANS KARNESİ")
     
     if not op_row_data.empty:
         karne_dict = op_row_data.to_dict(orient="records")[0]
