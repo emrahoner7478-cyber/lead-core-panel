@@ -191,10 +191,10 @@ else:
         karne_dict = op_row_data.to_dict(orient="records")[0]
         
         k1, k2, k3, k4 = st.columns(4)
-        k1.metric("🏢 Fabrika Genel Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
+        k1.metric("🏢 Lead Core Pres Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
         k2.metric("📦 Pay Edilmiş Net Üretim Katkısı", f"{int(karne_dict['Adil_Net_Uretim_Katkisi']):,} Adet")
         k3.metric("📅 Toplam Üretim Gün Havuzu", f"{gelinen_gun} / {toplam_aktif_gun} Gün", f"{int(karne_dict['Calisilan_Toplam_Vardiya'])} Vardiya")
-        k4.metric("📊 Toplam Kapasite Katılım Oranı", f"%{karne_dict['Ise_Katilim_Orani_Yuzde']}")
+        k4.metric("📊 Toplam Kapasiteye Katılım Oranı", f"%{karne_dict['Ise_Katilim_Orani_Yuzde']}")
     else:
         st.info("Seçilen operatöre ait bulut karne verisi hesaplanamadı.")
     
