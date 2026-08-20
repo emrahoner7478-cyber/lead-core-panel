@@ -6,33 +6,27 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNUN DOKUNAMADIĞI %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
-# Çökmeye sebep olan st.markdown tamamen kaldırıldı.
-# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
+# --- 🎯 %100 GÜVENLİ VE ENGELSİZ YEREL ARKA PLAN (HTML) ---
+# Yüklediğiniz .jpg formatındaki resmi doğrudan kendi deponuzdan okur.
+# Süslü parantez uyuşmazlığı yaşanmasın diye saf HTML tüneli kullanılmıştır.
 st.components.v1.html("""
 <style>
-/* Canlı Hareketli Arka Plan */
 body, html { margin: 0; padding: 0; }
-.bg-gif {
+.bg-jpg {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background-image: url("https://giphy.com");
+    background-image: url("app/static/arka_plan.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     z-index: -2;
 }
-/* Streamlit Arayüz Kutularını ve Sidebar'ı Şeffaflaştırma/Güzelleştirme Kuralları */
-parent.document.querySelector('.stApp').style.background = 'transparent';
-parent.document.querySelector('.main .block-container').style.backgroundColor = 'rgba(255, 255, 255, 0.94)';
-parent.document.querySelector('.main .block-container').style.padding = '40px';
-parent.document.querySelector('.main .block-container').style.borderRadius = '16px';
-parent.document.querySelector('.main .block-container').style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-parent.document.querySelector('.main .block-container').style.marginTop = '20px';
-parent.document.querySelector('[data-testid="stSidebar"]').style.backgroundColor = 'rgba(26, 54, 93, 0.95)';
 </style>
-<div class="bg-gif"></div>
+<div class="bg-jpg"></div>
 """, height=0)
+
+# Ana panel kutularını şeffaflaştıran ve verileri okutan güvenli CSS katmanı
+st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
@@ -162,6 +156,7 @@ def yeni_excel_mimarisi_oku():
         return None
 
 df = yeni_excel_mimarisi_oku()
+
 if df is None:
     st.error("❌ Bulut Dosyası Bulunamadı! Lütfen Excel dosyasının GitHub deponuza doğru yüklendiğinden emin olun.")
 else:
