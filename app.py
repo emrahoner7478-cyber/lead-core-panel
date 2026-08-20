@@ -6,10 +6,12 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN (HTML BILESENI) ---
-# Süslü parantez uyuşmazlığını önlemek için saf HTML tüneli kullanılmıştır
+# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN & TASARIM TÜNELİ ---
+# Çökmeye sebep olan 28. satırdaki st.markdown kaldırıldı. 
+# Tüm süslü parantezli CSS kodları bu HTML tünelinin içine gizlenerek Python'dan tamamen izole edildi.
 st.components.v1.html("""
 <style>
+/* Canlı Hareketli Arka Plan */
 body, html { margin: 0; padding: 0; }
 .bg-gif {
     position: fixed;
@@ -20,12 +22,17 @@ body, html { margin: 0; padding: 0; }
     background-repeat: no-repeat;
     z-index: -2;
 }
+/* Streamlit Arayüzünü Bulutta Şeffaflaştırma ve Kutuları Güzelleştirme Ayarları */
+parent.document.querySelector('.stApp').style.background = 'transparent';
+parent.document.querySelector('.main .block-container').style.backgroundColor = 'rgba(255, 255, 255, 0.94)';
+parent.document.querySelector('.main .block-container').style.padding = '40px';
+parent.document.querySelector('.main .block-container').style.borderRadius = '16px';
+parent.document.querySelector('.main .block-container').style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+parent.document.querySelector('.main .block-container').style.marginTop = '20px';
+parent.document.querySelector('[data-testid="stSidebar"]').style.backgroundColor = 'rgba(26, 54, 93, 0.95)';
 </style>
 <div class="bg-gif"></div>
 """, height=0)
-
-# Streamlit arayüz bileşenlerini şeffaflaştıran ve ana paneli okutan güvenli CSS (Süslü parantezsiz, saf metin formatlama)
-st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
