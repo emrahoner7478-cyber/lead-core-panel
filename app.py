@@ -6,9 +6,8 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎭 HAREKETLİ ENDÜSTRİYEL ARKA PLAN TASARIMI (CSS) ---
-# Arka planda sürekli dönen soyut bir metal eritme/endüstri döngüsü oynatır
-# Üstteki grafiklerin ve yazıların okunması için şeffaf bir filtre içerir
+# --- 🎯 HAREKETLİ ENDÜSTRİYEL ARKA PLAN TASARIMI (CSS) ---
+# Çökmeye sebep olan %92 ifadesi, güvenli olan 'rgba(255, 255, 255, 0.92)' ondalık formatına çevrilerek mühürlendi
 st.markdown(
     """
     <style>
@@ -20,7 +19,7 @@ st.markdown(
         background-attachment: fixed;
     }
     
-    /* Panel içeriğinin okunabilirliğini artırmak için şeffaf koyu katman */
+    /* Panel içeriğinin okunabilirliğini artıran şeffaf buzlu cam katmanı */
     .main .block-container {
         background-color: rgba(255, 255, 255, 0.92);
         padding: 2.5rem;
@@ -30,7 +29,7 @@ st.markdown(
         margin-bottom: 20px;
     }
     
-    /* Sol menü (Sidebar) şeffaflık ayarı */
+    /* Sol menü (Sidebar) şeffaflık ve beyaz yazı ayarı */
     [data-testid="stSidebar"] {
         background-color: rgba(26, 54, 93, 0.95) !important;
     }
@@ -171,7 +170,7 @@ def yeni_excel_mimarisi_oku():
 
 df = yeni_excel_mimarisi_oku()
 if df is None:
-    st.error("❌ Bulut Dosyası Bulunamadı! Lütfen Excel dosyasının GitHub deposuna doğru yüklendiğinden emin olun.")
+    st.error("❌ Bulut Dosyası Bulunamadı! Lütfen Excel dosyasının GitHub deponuza doğru yüklendiğinden emin olun.")
 else:
     # --- YAN PANEL ---
     st.sidebar.header("🔍 Bulut Yönetim Paneli")
@@ -224,7 +223,7 @@ else:
     else:
         st.info("Seçilen operatöre ait bulut karne verisi hesaplanamadı.")
     
-    st.info(f"🤖 **Görev Aldığı Makineler:** {makineler_listesi} | **Bireysel Net Pay Üretim Toplamı:** {op_net_pay_toplam:,} Adet")
+    st.info(f"🤖 **Görev Aldığı Makineler:** {makineler_listesi} | **Excel Toplam Aktif Gün Kümesi:** {toplam_aktif_gun} Gün")
     st.warning(f"⚠️ **Performansı Etkileyen Durum Logları:** {durum_ozet_metni}")
 
     st.markdown("---")
@@ -272,3 +271,4 @@ else:
             df_op_veri[["Tarih", "Vardiya", "Makine_No", "Urun_Cesidi", "Uretim", "Ham_Uretim", "Durum_Kodu"]].sort_values(by="Tarih"),
             use_container_width=True
         )
+
