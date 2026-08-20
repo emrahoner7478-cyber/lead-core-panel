@@ -6,12 +6,9 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN & TASARIM TÜNELİ ---
-# Çökmeye sebep olan 28. satırdaki st.markdown kaldırıldı. 
-# Tüm süslü parantezli CSS kodları bu HTML tünelinin içine gizlenerek Python'dan tamamen izole edildi.
+# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN (HTML BILESENI) ---
 st.components.v1.html("""
 <style>
-/* Canlı Hareketli Arka Plan */
 body, html { margin: 0; padding: 0; }
 .bg-gif {
     position: fixed;
@@ -22,17 +19,12 @@ body, html { margin: 0; padding: 0; }
     background-repeat: no-repeat;
     z-index: -2;
 }
-/* Streamlit Arayüzünü Bulutta Şeffaflaştırma ve Kutuları Güzelleştirme Ayarları */
-parent.document.querySelector('.stApp').style.background = 'transparent';
-parent.document.querySelector('.main .block-container').style.backgroundColor = 'rgba(255, 255, 255, 0.94)';
-parent.document.querySelector('.main .block-container').style.padding = '40px';
-parent.document.querySelector('.main .block-container').style.borderRadius = '16px';
-parent.document.querySelector('.main .block-container').style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-parent.document.querySelector('.main .block-container').style.marginTop = '20px';
-parent.document.querySelector('[data-testid="stSidebar"]').style.backgroundColor = 'rgba(26, 54, 93, 0.95)';
 </style>
 <div class="bg-gif"></div>
 """, height=0)
+
+# Streamlit arayüz bileşenlerini şeffaflaştıran ve ana paneli okutan güvenli CSS
+st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
@@ -196,7 +188,6 @@ else:
     df_op_veri = df[df["Operator_Adi"] == secilen_operator]
     op_row_data = karne_df[karne_df["Operator_Adi"] == secilen_operator]
     gelinen_gun = int(df_op_veri["Tarih"].nunique()) if not df_op_veri.empty else 0
-    op_net_pay_toplam = int(df_op_veri["Uretim"].sum()) if not df_op_veri.empty else 0
     
     makineler_listesi = ", ".join(sorted(df_op_veri["Makine_No"].unique().tolist())) if not df_op_veri.empty else "Yok"
     durum_sayilari = df_op_veri[df_op_veri["Durum_Kodu"] != "NORMAL"].groupby("Durum_Kodu").size().to_dict() if not df_op_veri.empty else {}
@@ -206,13 +197,17 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        karne_dict = op_row_data.to_dict(orient="records")
+        # HATA VEREN ADIM KESİN OLARAK DÜZELTİLDİ:
+        # .iloc[0] ve .values[0] üzerinden doğrudan sayısal değerler çekilerek uyuşmazlık mühürlendi
+        katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
+        toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
+        katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
         
         k1, k2, k3, k4 = st.columns(4)
         k1.metric("🏢 Fabrika Genel Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
-        k2.metric("📦 Pay Edilmiş Net Üretim Katkısı", f"{int(karne_dict['Adil_Net_Uretim_Katkisi']):,} Adet")
-        k3.metric("📅 Toplam Üretim Gün Havuzu", f"{gelinen_gun} / {toplam_aktif_gun} Gün", f"{int(karne_dict['Calisilan_Toplam_Vardiya'])} Vardiya")
-        k4.metric("📊 Toplam Kapasite Katılım Oranı", f"%{karne_dict['Ise_Katilim_Orani_Yuzde']}")
+        k2.metric("📦 Pay Edilmiş Net Üretim Katkısı", f"{katki_adet:,} Adet")
+        k3.metric("📅 Toplam Üretim Gün Havuzu", f"{gelinen_gun} / {toplam_aktif_gun} Gün", f"{toplam_vardiya} Vardiya")
+        k4.metric("📊 Toplam Kapasite Katılım Oranı", f"%{katilim_yuzde}")
     else:
         st.info("Seçilen operatöre ait bulut karne verisi hesaplanamadı.")
     
@@ -264,5 +259,6 @@ else:
             df_op_veri[["Tarih", "Vardiya", "Makine_No", "Urun_Cesidi", "Uretim", "Ham_Uretim", "Durum_Kodu"]].sort_values(by="Tarih"),
             use_container_width=True
         )
+
 
 
