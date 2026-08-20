@@ -6,47 +6,40 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 HAREKETLİ ENDÜSTRİYEL ARKA PLAN TASARIMI (CSS) ---
-# Çökmeye sebep olan %92 ifadesi, güvenli olan 'rgba(255, 255, 255, 0.92)' ondalık formatına çevrilerek mühürlendi
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: url("https://giphy.com");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    
-    /* Panel içeriğinin okunabilirliğini artıran şeffaf buzlu cam katmanı */
-    .main .block-container {
-        background-color: rgba(255, 255, 255, 0.92);
-        padding: 2.5rem;
-        border-radius: 16px;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    
-    /* Sol menü (Sidebar) şeffaflık ve beyaz yazı ayarı */
-    [data-testid="stSidebar"] {
-        background-color: rgba(26, 54, 93, 0.95) !important;
-    }
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
-        color: #FFFFFF !important;
-    }
-    </style>
-    """,
-    unsafe_html=True
-)
+# --- 🎯 METRİK MOTORUNU BOZMAYAN GÜVENLİ HAREKETLİ ARKA PLAN ---
+# Python formatlama karakterleriyle çakışmayan temizlenmiş saf CSS yapısı
+st.markdown("""
+<style>
+.stApp {
+    background-image: url("https://giphy.com");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.main .block-container {
+    background-color: rgba(255, 255, 255, 0.92);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+[data-testid="stSidebar"] {
+    background-color: rgba(26, 54, 93, 0.95) !important;
+}
+[data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
+    color: #FFFFFF !important;
+}
+</style>
+""", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
     st.image("fabrika_logo.png", width=250)
 
 st.title("Lead Core Bulut Performans Analiz Paneli")
-st.markdown("Google Drive üzerinden anlık güncellenen, telefondan erişilebilir resmi bulut ekranı.")
+st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
 tam_yol = "Lead_Core_Pres_Üretim.xlsx"
@@ -132,7 +125,7 @@ def yeni_excel_mimarisi_oku():
                         h_sabah = 0.0 if kod_s in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
                         for op in ops_sabah:
                             tum_satirlar.append({
-                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Makine", "Vardiya": "Sabah",
+                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Sabah",
                                 "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_s > 0 else "Personel Eksik (Kapalı)",
                                 "Uretim": urt_bolunmus, "Ham_Uretim": urt_s, "Durum_Kodu": kod_s, 
                                 "Vardiya_Durum_Hedefi": h_sabah_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
@@ -144,7 +137,7 @@ def yeni_excel_mimarisi_oku():
                         h_aksam = 0.0 if kod_a in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
                         for op in ops_aksam:
                             tum_satirlar.append({
-                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Makine", "Vardiya": "Akşam",
+                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Akşam",
                                 "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_a > 0 else "Personel Eksik (Kapalı)",
                                 "Uretim": urt_bolunmus, "Ham_Uretim": urt_a, "Durum_Kodu": kod_a, 
                                 "Vardiya_Durum_Hedefi": h_aksam_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
@@ -156,7 +149,7 @@ def yeni_excel_mimarisi_oku():
                         h_gece = 0.0 if kod_g in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
                         for op in ops_gece:
                             tum_satirlar.append({
-                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Makine", "Vardiya": "Gece",
+                                "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Gece",
                                 "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_g > 0 else "Personel Eksik (Kapalı)",
                                 "Uretim": urt_bolunmus, "Ham_Uretim": urt_g, "Durum_Kodu": kod_g, 
                                 "Vardiya_Durum_Hedefi": h_gece_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
@@ -271,4 +264,5 @@ else:
             df_op_veri[["Tarih", "Vardiya", "Makine_No", "Urun_Cesidi", "Uretim", "Ham_Uretim", "Durum_Kodu"]].sort_values(by="Tarih"),
             use_container_width=True
         )
+
 
