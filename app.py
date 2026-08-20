@@ -5,51 +5,83 @@ import streamlit as st
 
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
-# Başlığın hemen üstüne logoyu yerleştirir, width değerini küçülterek boyutunu ayarlayabilirsiniz
-if os.path.exists("lead_core_pres.jpg"):
-    st.image("lead_core_pres.jpg", width=250)
 
-st.title("Lead Core Pres Performans ve Katılım Analiz Paneli")
+# --- 🎭 HAREKETLİ ENDÜSTRİYEL ARKA PLAN TASARIMI (CSS) ---
+# Arka planda sürekli dönen soyut bir metal eritme/endüstri döngüsü oynatır
+# Üstteki grafiklerin ve yazıların okunması için şeffaf bir filtre içerir
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://giphy.com");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    
+    /* Panel içeriğinin okunabilirliğini artırmak için şeffaf koyu katman */
+    .main .block-container {
+        background-color: rgba(255, 255, 255, 0.92);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    /* Sol menü (Sidebar) şeffaflık ayarı */
+    [data-testid="stSidebar"] {
+        background-color: rgba(26, 54, 93, 0.95) !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
+        color: #FFFFFF !important;
+    }
+    </style>
+    """,
+    unsafe_html=True
+)
 
+# --- 🖼️ LOGO VE BAŞLIK ALANI ---
+if os.path.exists("fabrika_logo.png"):
+    st.image("fabrika_logo.png", width=250)
+
+st.title("Lead Core Bulut Performans Analiz Paneli")
+st.markdown("Google Drive üzerinden anlık güncellenen, telefondan erişilebilir resmi bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
-# Excel dosyanız kodla yan yana durduğu için doğrudan ismiyle çağrılmaktadır
 tam_yol = "Lead_Core_Pres_Üretim.xlsx"
 
-@st.cache_data(ttl=600) # Verileri 10 dakikada bir buluttan tazeler, sistemi yormaz
+@st.cache_data(ttl=600)
 def yeni_excel_mimarisi_oku():
     try:
-        # Depoya yüklediğiniz Excel dosyasını doğrudan ve engelsiz okur
         excel_dosyasi = pd.ExcelFile(tam_yol, engine="openpyxl")
         tum_satirlar = []
         
         toplam_aktif_gun_sayisi = len(excel_dosyasi.sheet_names)
-        # 7 Makine ve 3 Vardiya çarpanıyla toplam kapasite havuzu
         maks_teorik_vardiya = toplam_aktif_gun_sayisi * 7 * 3
         vardiya_hedef_adet = 90000.0
 
         for sayfa in excel_dosyasi.sheet_names:
             df_sayfa = pd.read_excel(tam_yol, sheet_name=sayfa, header=None, engine="openpyxl")
             
-            # --- İSTİSNA TABLOSUNU OKUMA (50-56 ARASI) ---
             istisnalar = {"Sabah": {}, "Akşam": {}, "Gece": {}}
             for r in range(49, min(56, len(df_sayfa))):
-                m_s, k_s = df_sayfa.iloc[r, 9], df_sayfa.iloc[r, 10]    # J ve K
+                m_s, k_s = df_sayfa.iloc[r, 9], df_sayfa.iloc[r, 10]
                 if pd.notna(m_s) and pd.notna(k_s):
                     try: istisnalar["Sabah"][int(float(m_s))] = str(k_s).strip().upper()
                     except: pass
                     
-                m_a, k_a = df_sayfa.iloc[r, 11], df_sayfa.iloc[r, 13]   # L ve N
+                m_a, k_a = df_sayfa.iloc[r, 11], df_sayfa.iloc[r, 13]
                 if pd.notna(m_a) and pd.notna(k_a):
                     try: istisnalar["Akşam"][int(float(m_a))] = str(k_a).strip().upper()
                     except: pass
                     
-                m_g, k_g = df_sayfa.iloc[r, 14], df_sayfa.iloc[r, 15]   # O ve P
+                m_g, k_g = df_sayfa.iloc[r, 14], df_sayfa.iloc[r, 15]
                 if pd.notna(m_g) and pd.notna(k_g):
                     try: istisnalar["Gece"][int(float(m_g))] = str(k_g).strip().upper()
                     except: pass
 
-            # --- 7 MAKİNE MATRİSİNİ OKUMA ---
             for m_idx in range(7):
                 makine_no = m_idx + 1
                 bas_satir = 5 + (m_idx * 6)
@@ -72,7 +104,6 @@ def yeni_excel_mimarisi_oku():
                 h_aksam_sabit = 0.0 if kod_a in ["T-ARIZA", "M-YOK", "OP-YOK"] else vardiya_hedef_adet
                 h_gece_sabit  = 0.0 if kod_g in ["T-ARIZA", "M-YOK", "OP-YOK"] else vardiya_hedef_adet
                 
-                # Vardiya bazlı ürün toplamları
                 toplam_urt_sabah, toplam_urt_aksam, toplam_urt_gece = 0.0, 0.0, 0.0
                 for p_idx in range(0, 5, 2):
                     r_aktif = bas_satir + p_idx
@@ -96,7 +127,6 @@ def yeni_excel_mimarisi_oku():
                     urt_a = 0.0 if pd.isna(urt_a) else float(urt_a)
                     urt_g = 0.0 if pd.isna(urt_g) else float(urt_g)
                     
-                    # Ortak vardiyalardaki üretim adedi paylaştırılıyor
                     if ops_sabah and (urt_s > 0 or (kod_s == "OP-YOK" and p_idx == 0)):
                         op_sayisi = len(ops_sabah)
                         urt_bolunmus = urt_s / op_sayisi
@@ -148,7 +178,6 @@ else:
     operatorler = sorted(df["Operator_Adi"].unique().tolist())
     secilen_operator = st.sidebar.selectbox("Detaylı Karnesini İncelemek İçin Operatör Seçin:", operatorler)
     
-    # Canlı Yenileme Butonu
     if st.sidebar.button("🔄 Verileri Depodan Şimdi Yenile"):
         st.cache_data.clear()
         st.rerun()
@@ -156,11 +185,9 @@ else:
     toplam_aktif_gun = int(df["Toplam_Aktif_Gun"].mean())
     maks_vardiya_kapasite = int(df["Maks_Vardiya_Kapasite"].mean())
     
-    # Fabrika genel ham üretim toplamı
     tekil_ham_kayitlar = df.groupby(["Tarih", "Makine_No", "Vardiya", "Urun_Cesidi"])["Ham_Uretim"].first().reset_index()
     büyük_fabrika_toplam_uretim = int(tekil_ham_kayitlar["Ham_Uretim"].sum())
     
-    # Gün esaslı matematiksel planlama
     tekil_is_emri_df = df.groupby(["Operator_Adi", "Tarih", "Makine_No", "Vardiya"]).agg(
         Net_Vardiya_Uretimi=("Uretim", "sum"),
         Net_Vardiya_Hedefi=("Vardiya_Durum_Hedefi", "first")
@@ -174,7 +201,6 @@ else:
     karne_df = pd.merge(op_uretimler, op_katilim, on="Operator_Adi")
     karne_df["Adil_Net_Uretim_Katkisi"] = karne_df["Adil_Net_Uretim_Katkisi"].round(0)
 
-    # Veri Sözlüğü Yapılandırması
     df_op_veri = df[df["Operator_Adi"] == secilen_operator]
     op_row_data = karne_df[karne_df["Operator_Adi"] == secilen_operator]
     gelinen_gun = int(df_op_veri["Tarih"].nunique()) if not df_op_veri.empty else 0
@@ -185,20 +211,20 @@ else:
     durum_ozet_metni = " / ".join([f"{k}: {v} Kez" for k, v in durum_sayilari.items()]) if durum_sayilari else "Yok"
 
     # --- 👤 SEÇİLEN OPERATÖRÜN DİJİTAL KARNESİ ---
-    st.subheader(f"📋 {secilen_operator} PERFORMANS KARNESİ")
+    st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
         karne_dict = op_row_data.to_dict(orient="records")[0]
         
         k1, k2, k3, k4 = st.columns(4)
-        k1.metric("🏢 Lead Core Pres Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
+        k1.metric("🏢 Fabrika Genel Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
         k2.metric("📦 Pay Edilmiş Net Üretim Katkısı", f"{int(karne_dict['Adil_Net_Uretim_Katkisi']):,} Adet")
         k3.metric("📅 Toplam Üretim Gün Havuzu", f"{gelinen_gun} / {toplam_aktif_gun} Gün", f"{int(karne_dict['Calisilan_Toplam_Vardiya'])} Vardiya")
-        k4.metric("📊 Toplam Kapasiteye Katılım Oranı", f"%{karne_dict['Ise_Katilim_Orani_Yuzde']}")
+        k4.metric("📊 Toplam Kapasite Katılım Oranı", f"%{karne_dict['Ise_Katilim_Orani_Yuzde']}")
     else:
         st.info("Seçilen operatöre ait bulut karne verisi hesaplanamadı.")
     
-    st.info(f"🤖 **Görev Aldığı Makineler:** {makineler_listesi} | **Excel Toplam Aktif Gün Kümesi:** {toplam_aktif_gun} Gün")
+    st.info(f"🤖 **Görev Aldığı Makineler:** {makineler_listesi} | **Bireysel Net Pay Üretim Toplamı:** {op_net_pay_toplam:,} Adet")
     st.warning(f"⚠️ **Performansı Etkileyen Durum Logları:** {durum_ozet_metni}")
 
     st.markdown("---")
