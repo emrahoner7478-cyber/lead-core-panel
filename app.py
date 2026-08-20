@@ -6,9 +6,12 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN (HTML BILESENI) ---
+# --- 🎯 METRİK MOTORUNUN DOKUNAMADIĞI %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
+# Çökmeye sebep olan st.markdown tamamen kaldırıldı.
+# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
 st.components.v1.html("""
 <style>
+/* Canlı Hareketli Arka Plan */
 body, html { margin: 0; padding: 0; }
 .bg-gif {
     position: fixed;
@@ -19,18 +22,23 @@ body, html { margin: 0; padding: 0; }
     background-repeat: no-repeat;
     z-index: -2;
 }
+/* Streamlit Arayüz Kutularını ve Sidebar'ı Şeffaflaştırma/Güzelleştirme Kuralları */
+parent.document.querySelector('.stApp').style.background = 'transparent';
+parent.document.querySelector('.main .block-container').style.backgroundColor = 'rgba(255, 255, 255, 0.94)';
+parent.document.querySelector('.main .block-container').style.padding = '40px';
+parent.document.querySelector('.main .block-container').style.borderRadius = '16px';
+parent.document.querySelector('.main .block-container').style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
+parent.document.querySelector('.main .block-container').style.marginTop = '20px';
+parent.document.querySelector('[data-testid="stSidebar"]').style.backgroundColor = 'rgba(26, 54, 93, 0.95)';
 </style>
 <div class="bg-gif"></div>
 """, height=0)
-
-# Streamlit arayüz bileşenlerini şeffaflaştıran ve ana paneli okutan güvenli CSS
-st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
     st.image("fabrika_logo.png", width=250)
 
-st.title("Lead Core Bulut Performans Analiz Paneli")
+st.title("Lead Core Bulut Performance Analiz Paneli")
 st.markdown("GitHub deponuz üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
@@ -197,8 +205,6 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        # HATA VEREN ADIM KESİN OLARAK DÜZELTİLDİ:
-        # .iloc[0] ve .values[0] üzerinden doğrudan sayısal değerler çekilerek uyuşmazlık mühürlendi
         katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
         toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
         katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
@@ -259,6 +265,7 @@ else:
             df_op_veri[["Tarih", "Vardiya", "Makine_No", "Urun_Cesidi", "Uretim", "Ham_Uretim", "Durum_Kodu"]].sort_values(by="Tarih"),
             use_container_width=True
         )
+
 
 
 
