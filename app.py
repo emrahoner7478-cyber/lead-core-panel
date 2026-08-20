@@ -6,40 +6,33 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN GÜVENLİ HAREKETLİ ARKA PLAN ---
-# Python formatlama karakterleriyle çakışmayan temizlenmiş saf CSS yapısı
-st.markdown("""
+# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN (HTML BILESENI) ---
+# Süslü parantez uyuşmazlığını önlemek için saf HTML tüneli kullanılmıştır
+st.components.v1.html("""
 <style>
-.stApp {
+body, html { margin: 0; padding: 0; }
+.bg-gif {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
     background-image: url("https://giphy.com");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-.main .block-container {
-    background-color: rgba(255, 255, 255, 0.92);
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-[data-testid="stSidebar"] {
-    background-color: rgba(26, 54, 93, 0.95) !important;
-}
-[data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
-    color: #FFFFFF !important;
+    z-index: -2;
 }
 </style>
-""", unsafe_html=True)
+<div class="bg-gif"></div>
+""", height=0)
+
+# Streamlit arayüz bileşenlerini şeffaflaştıran ve ana paneli okutan güvenli CSS (Süslü parantezsiz, saf metin formatlama)
+st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
     st.image("fabrika_logo.png", width=250)
 
 st.title("Lead Core Bulut Performans Analiz Paneli")
-st.markdown("GitHub deposu üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
+st.markdown("GitHub deponuz üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
 tam_yol = "Lead_Core_Pres_Üretim.xlsx"
@@ -206,7 +199,7 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        karne_dict = op_row_data.to_dict(orient="records")[0]
+        karne_dict = op_row_data.to_dict(orient="records")
         
         k1, k2, k3, k4 = st.columns(4)
         k1.metric("🏢 Fabrika Genel Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
