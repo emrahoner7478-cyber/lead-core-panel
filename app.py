@@ -6,12 +6,10 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
-# Çökmeye sebep olan tüm st.markdown stil blokları kaldırıldı.
-# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
+# --- 🎯 GÜVENLİ JPG ARKA PLAN (HTML TÜNELİ) ---
+# Süslü parantez hatasını önlemek ve .jpg resmi kararlı çalıştırmak için saf HTML yapısı
 st.components.v1.html("""
 <style>
-/* Yüklediğiniz .jpg Arka Plan Görseli */
 body, html { margin: 0; padding: 0; }
 .bg-jpg {
     position: fixed;
@@ -22,23 +20,18 @@ body, html { margin: 0; padding: 0; }
     background-repeat: no-repeat;
     z-index: -2;
 }
-/* Streamlit Arayüz Kutularını ve Sidebar'ı Şeffaflaştırma/Güzelleştirme Kuralları */
-parent.document.querySelector('.stApp').style.background = 'transparent';
-parent.document.querySelector('.main .block-container').style.backgroundColor = 'rgba(255, 255, 255, 0.94)';
-parent.document.querySelector('.main .block-container').style.padding = '40px';
-parent.document.querySelector('.main .block-container').style.borderRadius = '16px';
-parent.document.querySelector('.main .block-container').style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
-parent.document.querySelector('.main .block-container').style.marginTop = '20px';
-parent.document.querySelector('[data-testid="stSidebar"]').style.backgroundColor = 'rgba(26, 54, 93, 0.95)';
 </style>
 <div class="bg-jpg"></div>
 """, height=0)
+
+# Ana panel kutularını buzlu/şeffaf yapan güvenli CSS katmanı
+st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
     st.image("fabrika_logo.png", width=250)
 
-st.title("Lead Core Bulut Performance Analiz Paneli")
+st.title("Lead Core Bulut Performans Analiz Paneli")
 st.markdown("GitHub deponuz üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
@@ -86,7 +79,7 @@ def yeni_excel_mimarisi_oku():
                 
                 ops_sabah = [str(o).strip() for o in ops_sabah if pd.notna(o) and str(o).strip() != "" and str(o).strip().upper() not in yasakli]
                 ops_aksam = [str(o).strip() for o in ops_aksam if pd.notna(o) and str(o).strip() != "" and str(o).strip().upper() not in yasakli]
-                ops_gece = [str(o).strip() for o in ops_gece if pd.notna(o) and str(o).strip() != "" and str(o).strip().upper() not in yasakli]
+                ops_gece  = [str(o).strip() for o in ops_gece if pd.notna(o) and str(o).strip() != "" and str(o).strip().upper() not in yasakli]
                 
                 kod_s = istisnalar["Sabah"].get(makine_no, "NORMAL")
                 kod_a = istisnalar["Akşam"].get(makine_no, "NORMAL")
@@ -205,9 +198,11 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values)
-        toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values)
-        katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values)
+        # HATA VEREN ADIM DIZI INDEKSLERI SIFIRLANARAK KESIN OLARAK COZULDU:
+        # .values[0] kuralı ile dizinin içindeki net sayı ayıklandı ve uyuşmazlık tamamen giderildi
+        katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
+        toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
+        katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
         
         k1, k2, k3, k4 = st.columns(4)
         k1.metric("🏢 Fabrika Genel Toplam Üretim", f"{büyük_fabrika_toplam_uretim:,} Adet")
