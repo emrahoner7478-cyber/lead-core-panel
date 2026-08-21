@@ -6,12 +6,9 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
-# Çökmeye sebep olan tüm st.markdown stil blokları kaldırıldı.
-# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
+# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN ARKA PLAN VE STİL BLOĞU (HTML) ---
 st.components.v1.html("""
 <style>
-/* Yüklediğiniz .jpg Arka Plan Görseli */
 body, html { margin: 0; padding: 0; }
 .bg-jpg {
     position: fixed;
@@ -25,6 +22,9 @@ body, html { margin: 0; padding: 0; }
 </style>
 <div class="bg-jpg"></div>
 """, height=0)
+
+# Ana panel kutularını buzlu/şeffaf yapan güvenli CSS katmanı
+st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
@@ -111,39 +111,37 @@ def yeni_excel_mimarisi_oku():
                     urt_a = 0.0 if pd.isna(urt_a) else float(urt_a)
                     urt_g = 0.0 if pd.isna(urt_g) else float(urt_g)
                     
+                    # Ortak vardiyalardaki üretim adedi paylaştırılıyor
                     if ops_sabah and (urt_s > 0 or (kod_s == "OP-YOK" and p_idx == 0)):
                         op_sayisi = len(ops_sabah)
-                        urt_bolunmus = urt_s / op_sayisi
-                        h_sabah = 0.0 if kod_s in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
+                        urt_bolunmus = float(urt_s / op_sayisi)
                         for op in ops_sabah:
                             tum_satirlar.append({
                                 "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Sabah",
-                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_s > 0 else "Personel Eksik (Kapalı)",
-                                "Uretim": urt_bolunmus, "Ham_Uretim": urt_s, "Durum_Kodu": kod_s, 
+                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if ... else urun_adi,
+                                "Uretim": urt_bolunmus, "Ham_Uretim": float(urt_s), "Durum_Kodu": kod_s, 
                                 "Vardiya_Durum_Hedefi": h_sabah_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
                             })
                             
                     if ops_aksam and (urt_a > 0 or (kod_a == "OP-YOK" and p_idx == 0)):
                         op_sayisi = len(ops_aksam)
-                        urt_bolunmus = urt_a / op_sayisi
-                        h_aksam = 0.0 if kod_a in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
+                        urt_bolunmus = float(urt_a / op_sayisi)
                         for op in ops_aksam:
                             tum_satirlar.append({
                                 "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Akşam",
-                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_a > 0 else "Personel Eksik (Kapalı)",
-                                "Uretim": urt_bolunmus, "Ham_Uretim": urt_a, "Durum_Kodu": kod_a, 
+                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if ... else urun_adi,
+                                "Uretim": urt_bolunmus, "Ham_Uretim": float(urt_a), "Durum_Kodu": kod_a, 
                                 "Vardiya_Durum_Hedefi": h_aksam_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
                             })
                             
                     if ops_gece and (urt_g > 0 or (kod_g == "OP-YOK" and p_idx == 0)):
                         op_sayisi = len(ops_gece)
-                        urt_bolunmus = urt_g / op_sayisi
-                        h_gece = 0.0 if kod_g in ["T-ARIZA", "M-YOK", "OP-YOK"] else (vardiya_hedef_adet if p_idx == 0 else 0.0)
+                        urt_bolunmus = float(urt_g / op_sayisi)
                         for op in ops_gece:
                             tum_satirlar.append({
                                 "Tarih": str(sayfa), "Makine_No": f"{makine_no}. Machine", "Vardiya": "Gece",
-                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if urt_g > 0 else "Personel Eksik (Kapalı)",
-                                "Uretim": urt_bolunmus, "Ham_Uretim": urt_g, "Durum_Kodu": kod_g, 
+                                "Operator_Adi": op, "Urun_Cesidi": urun_adi if ... else urun_adi,
+                                "Uretim": urt_bolunmus, "Ham_Uretim": float(urt_g), "Durum_Kodu": kod_g, 
                                 "Vardiya_Durum_Hedefi": h_gece_sabit, "Toplam_Aktif_Gun": toplam_aktif_gun_sayisi, "Maks_Vardiya_Kapasite": maks_teorik_vardiya
                             })
 
@@ -169,23 +167,22 @@ else:
     toplam_aktif_gun = int(df["Toplam_Aktif_Gun"].mean())
     maks_vardiya_kapasite = int(df["Maks_Vardiya_Kapasite"].mean())
     
-    # 🎯 %100 CANLI, ARINMIŞ VE DINAMIK TOPLAM MODELI:
-    # El ile sabit sayı çıkarma (11678 gibi) tamamen iptal edildi. 
-    # Sistem artık Excel'e yeni sayfalar ekledikçe pay edilmiş net 'Uretim' sütununu otomatik toplayacak.
-    # Böylece grafik toplamları ne çıkarsa yukarıdaki kart da tam o sayıyı canlı üretecek ve kuruşu kuruşuna eşitlenecek!
+    # 🎯 KESİN EŞİTLEME MODELİ:
+    # Fabrika genel toplamı artık hiçbir dış kayıptan etkilenmeyen net 'Uretim' sütununun saf toplamıdır.
+    # Bu sayede aşağıdaki grafik paylarının toplamı ne çıkarsa, buradaki kart da kuruşu kuruşuna o sayıyı basacaktır!
     büyük_fabrika_toplam_uretim = int(df["Uretim"].sum())
     
-    # Gün esaslı matematiksel planlama
-    tekil_is_emri_df = df.groupby(["Operator_Adi", "Tarih", "Makine_No", "Vardiya"]).agg(
-        Net_Vardiya_Uretimi=("Uretim", "sum"),
-        Net_Vardiya_Hedefi=("Vardiya_Durum_Hedefi", "first")
-    ).reset_index()
+    # --- 🎯 HATAYI SIFIRLAYAN YENİ TEKİL VARDİYA GRUPLAMASI ---
+    # Bir operatörün o vardiyada kaç farklı ürün bastığına bakmaksızın, katılımını TEKİL (Tarih-Makine-Vardiya) bazda sayıyoruz.
+    tekil_katilim_df = df.drop_duplicates(subset=["Operator_Adi", "Tarih", "Makine_No", "Vardiya"])
+    op_katilim = tekil_katilim_df.groupby("Operator_Adi").size().reset_index(name="Calisilan_Toplam_Vardiya")
     
-    op_katilim = tekil_is_emri_df.groupby("Operator_Adi").size().reset_index(name="Calisilan_Toplam_Vardiya")
     op_katilim["Ise_Katilim_Orani_Yuzde"] = (op_katilim["Calisilan_Toplam_Vardiya"] / maks_vardiya_kapasite) * 100
     op_katilim["Ise_Katilim_Orani_Yuzde"] = op_katilim["Ise_Katilim_Orani_Yuzde"].round(1)
     
+    # Operatörlerin net bölünmüş üretim katkıları
     op_uretimler = df.groupby("Operator_Adi")["Uretim"].sum().reset_index(name="Adil_Net_Uretim_Katkisi")
+    
     karne_df = pd.merge(op_uretimler, op_katilim, on="Operator_Adi")
     karne_df["Adil_Net_Uretim_Katkisi"] = karne_df["Adil_Net_Uretim_Katkisi"].round(0)
 
@@ -195,13 +192,12 @@ else:
     
     makineler_listesi = ", ".join(sorted(df_op_veri["Makine_No"].unique().tolist())) if not df_op_veri.empty else "Yok"
     durum_sayilari = df_op_veri[df_op_veri["Durum_Kodu"] != "NORMAL"].groupby("Durum_Kodu").size().to_dict() if not df_op_veri.empty else {}
-    durum_ozet_metni = " / ".join([f"{k}: {v} Kez" for k, v in durum_sayilari.items()]) if durum_sayilari else "Yok"
+    durum_ozet_metni = " / ".join([f"{k}: {v} Kez" for k, v in durum_sayilari.items()]) if durum_ozet_metni else "Yok"
 
     # --- 👤 SEÇİLEN OPERATÖRÜN DİJİTAL KARNESİ ---
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        # Önceki tırnak ve dizi uyuşmazlığı hatası bu satırda kesin olarak mühürlendi:
         katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
         toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
         katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
@@ -249,6 +245,7 @@ else:
         st.markdown("---")
         st.subheader("🤖 Makinelere Göre Toplam Üretim ve Ürün Çeşidi Dağılımı")
         
+        # Grafiklerin milimetrik uyuşması için net 'Uretim' sütununu makine bazlı grupluyoruz
         makine_urun_df = df.groupby(["Makine_No", "Urun_Cesidi"])["Uretim"].sum().reset_index()
         fig_column_urun = px.bar(
             makine_urun_df, x="Makine_No", y="Uretim", color="Urun_Cesidi",
