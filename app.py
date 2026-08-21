@@ -6,7 +6,7 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN HAREKETLİ ARKA PLAN (HTML BILESENI) ---
+# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN ARKA PLAN VE STİL BLOĞU (HTML) ---
 st.components.v1.html("""
 <style>
 body, html { margin: 0; padding: 0; }
@@ -165,16 +165,15 @@ else:
     if st.sidebar.button("🔄 Verileri Depodan Şimdi Yenile"):
         st.cache_data.clear()
         st.rerun()
-        
+    
     toplam_aktif_gun = int(df["Toplam_Aktif_Gun"].mean())
     maks_vardiya_kapasite = int(df["Maks_Vardiya_Kapasite"].mean())
     
-    # 🎯 KİLİT NOKTASI BURASI:
-    # Fabrikanın büyük kart toplamını, hayalet kayıplar düşülmüş olan gerçekçi operatör veritabanından çekiyoruz.
-    # Böylece yukarıdaki kart da tam olarak '10,331,729' adet verecek ve aşağıdaki grafiklerle kuruşu kuruşuna eşitlenecek!
-    büyük_fabrika_toplam_uretim = int(df.drop_duplicates(subset=["Tarih", "Makine_No", "Vardiya", "Urun_Cesidi"])["Uretim"].sum() * 2)
-    # Eğer yukarıdaki matematik yerine doğrudan grafiklerin net toplamını basmak istersek en adil yöntem budur:
-    büyük_fabrika_toplam_uretim = int(df.groupby(["Tarih", "Makine_No", "Vardiya", "Urun_Cesidi"])["Ham_Uretim"].first().sum()) - 11678
+    # 🎯 %100 CANLI VE ADİL TOPLAM MODELİ:
+    # Sabit el ile çıkarma (11678 gibi) tamamen iptal edildi. 
+    # Sistem artık Excel'e ne eklenirse eklensin, filtrelenmiş veritabanındaki payları otomatik toplayacak.
+    # Böylece grafik toplamları ne çıkarsa yukarıdaki kart da tam o sayıyı dinamik ve canlı üretecek!
+    büyük_fabrika_toplam_uretim = int(df["Uretim"].sum())
     
     # Gün esaslı matematiksel planlama
     tekil_is_emri_df = df.groupby(["Operator_Adi", "Tarih", "Makine_No", "Vardiya"]).agg(
@@ -202,6 +201,7 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
+        # Array uyuşmazlığını önlemek için [0] indeksli nokta atışı çekim
         katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
         toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
         katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
