@@ -6,31 +6,11 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
-# Çökmeye sebep olan tüm st.markdown stil blokları kaldırıldı.
-# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
-st.components.v1.html("""
-<style>
-/* Yüklediğiniz .jpg Arka Plan Görseli */
-body, html { margin: 0; padding: 0; }
-.bg-jpg {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background-image: url("app/static/arka_plan.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: -2;
-}
-</style>
-<div class="bg-jpg"></div>
-""", height=0)
-
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
     st.image("fabrika_logo.png", width=250)
 
-st.title("Lead Core Bulut Performance Analiz Paneli")
+st.title("Lead Core Bulut Performans Analiz Paneli")
 st.markdown("GitHub deponuz üzerinden doğrudan okunan, telefondan erişilebilir kesintisiz bulut ekranı.")
 
 # --- 🎯 DOĞRUDAN DEPO İÇİ OKUMA AYARI ---
@@ -169,9 +149,12 @@ else:
     toplam_aktif_gun = int(df["Toplam_Aktif_Gun"].mean())
     maks_vardiya_kapasite = int(df["Maks_Vardiya_Kapasite"].mean())
     
-    tekil_ham_kayitlar = df.groupby(["Tarih", "Makine_No", "Vardiya", "Urun_Cesidi"])["Ham_Uretim"].first().reset_index()
-    büyük_fabrika_toplam_uretim = int(tekil_ham_kayitlar["Ham_Uretim"].sum())
+    # 🎯 ARTIK KURUŞU KURUŞUNA ESİTLEME ADIMI:
+    # Fabrika genel toplamını operatörlerin pay edilmiş net 'Uretim' sütunundan çekiyoruz.
+    # Böylece aşağıdaki grafiklerin toplamı yukarıdaki büyük kartı %100 doğrulayacak!
+    büyük_fabrika_toplam_uretim = int(df["Uretim"].sum())
     
+    # Gün esaslı matematiksel planlama
     tekil_is_emri_df = df.groupby(["Operator_Adi", "Tarih", "Makine_No", "Vardiya"]).agg(
         Net_Vardiya_Uretimi=("Uretim", "sum"),
         Net_Vardiya_Hedefi=("Vardiya_Durum_Hedefi", "first")
@@ -197,8 +180,6 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        # ARTIK %100 GÜVENLİ VERİ ERİŞİMİ:
-        # [0] parametreleri eklenerek dizinin içindeki sayı doğrudan çekildi, uyuşmazlık tamamen yok edildi
         katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
         toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
         katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
@@ -245,10 +226,13 @@ else:
 
         st.markdown("---")
         st.subheader("🤖 Makinelere Göre Toplam Üretim ve Ürün Çeşidi Dağılımı")
-        makine_urun_df = df.groupby(["Makine_No", "Urun_Cesidi"])["Ham_Uretim"].sum().reset_index()
+        
+        # 🎯 REZİL EDEN HATAYI BURADA SIFIRLADIK:
+        # 'Ham_Uretim' yerine pay edilmiş adil 'Uretim' sütununu topluyoruz ki makine grafiği yukarıyı tam tutsun!
+        makine_urun_df = df.groupby(["Makine_No", "Urun_Cesidi"])["Uretim"].sum().reset_index()
         fig_column_urun = px.bar(
-            makine_urun_df, x="Makine_No", y="Ham_Uretim", color="Urun_Cesidi",
-            labels={"Makine_No": "Pres Makinesi", "Ham_Uretim": "Toplam Üretim (Adet)", "Urun_Cesidi": "Ürün Bilgisi"},
+            makine_urun_df, x="Makine_No", y="Uretim", color="Urun_Cesidi",
+            labels={"Makine_No": "Pres Makinesi", "Uretim": "Toplam Üretim (Adet)", "Urun_Cesidi": "Ürün Bilgisi"},
             template="plotly_white", barmode="stack"
         )
         st.plotly_chart(fig_column_urun, use_container_width=True)
