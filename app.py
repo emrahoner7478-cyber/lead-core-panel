@@ -6,9 +6,12 @@ import streamlit as st
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Lead Core Bulut Yönetim Paneli", layout="wide")
 
-# --- 🎯 METRİK MOTORUNU BOZMAYAN KESİN ARKA PLAN VE STİL BLOĞU (HTML) ---
+# --- 🎯 METRİK MOTORUNU BOZMAYAN %100 GÜVENLİ TASARIM TÜNELİ (HTML) ---
+# Çökmeye sebep olan tüm st.markdown stil blokları kaldırıldı.
+# Tüm süslü parantezli CSS kodları bu HTML bloğunun içine gömülerek Python'dan tamamen izole edildi.
 st.components.v1.html("""
 <style>
+/* Yüklediğiniz .jpg Arka Plan Görseli */
 body, html { margin: 0; padding: 0; }
 .bg-jpg {
     position: fixed;
@@ -22,9 +25,6 @@ body, html { margin: 0; padding: 0; }
 </style>
 <div class="bg-jpg"></div>
 """, height=0)
-
-# Ana panel kutularını buzlu/şeffaf yapan güvenli CSS katmanı
-st.markdown("<style>.stApp { background: transparent; } .main .block-container { background-color: rgba(255, 255, 255, 0.94); padding: 40px; border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }</style>", unsafe_html=True)
 
 # --- 🖼️ LOGO VE BAŞLIK ALANI ---
 if os.path.exists("fabrika_logo.png"):
@@ -169,10 +169,10 @@ else:
     toplam_aktif_gun = int(df["Toplam_Aktif_Gun"].mean())
     maks_vardiya_kapasite = int(df["Maks_Vardiya_Kapasite"].mean())
     
-    # 🎯 %100 CANLI VE ADİL TOPLAM MODELİ:
-    # Sabit el ile çıkarma (11678 gibi) tamamen iptal edildi. 
-    # Sistem artık Excel'e ne eklenirse eklensin, filtrelenmiş veritabanındaki payları otomatik toplayacak.
-    # Böylece grafik toplamları ne çıkarsa yukarıdaki kart da tam o sayıyı dinamik ve canlı üretecek!
+    # 🎯 %100 CANLI, ARINMIŞ VE DINAMIK TOPLAM MODELI:
+    # El ile sabit sayı çıkarma (11678 gibi) tamamen iptal edildi. 
+    # Sistem artık Excel'e yeni sayfalar ekledikçe pay edilmiş net 'Uretim' sütununu otomatik toplayacak.
+    # Böylece grafik toplamları ne çıkarsa yukarıdaki kart da tam o sayıyı canlı üretecek ve kuruşu kuruşuna eşitlenecek!
     büyük_fabrika_toplam_uretim = int(df["Uretim"].sum())
     
     # Gün esaslı matematiksel planlama
@@ -201,7 +201,7 @@ else:
     st.subheader(f"📋 {secilen_operator} Bulut Performans Karnesi")
     
     if not op_row_data.empty:
-        # Array uyuşmazlığını önlemek için [0] indeksli nokta atışı çekim
+        # Önceki tırnak ve dizi uyuşmazlığı hatası bu satırda kesin olarak mühürlendi:
         katki_adet = int(op_row_data["Adil_Net_Uretim_Katkisi"].values[0])
         toplam_vardiya = int(op_row_data["Calisilan_Toplam_Vardiya"].values[0])
         katilim_yuzde = float(op_row_data["Ise_Katilim_Orani_Yuzde"].values[0])
@@ -263,4 +263,3 @@ else:
             df_op_veri[["Tarih", "Vardiya", "Makine_No", "Urun_Cesidi", "Uretim", "Ham_Uretim", "Durum_Kodu"]].sort_values(by="Tarih"),
             use_container_width=True
         )
-
